@@ -45,14 +45,14 @@ bin/
 obj/
 .vscode/
 210219/
-Assigment1/
+Assingment1/
 Challenge/
 Debugger/
 DeclaringClasses/
 Files/
 Mimi Class/
 MoveConstructor/
-Mystring-move-assigment/
+Mystring-move-assingment/
 Section 11/
 Section4/
 Section6Challenge/
@@ -66,6 +66,7 @@ Section11/
 Section12/
 Section12Challenge/
 Section13/
+Section13Challenge/
 Section14/
 ShallowCopy/
 # End of https://www.gitignore.io/api/c++,codeblocks
