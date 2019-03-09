@@ -5,20 +5,12 @@
 
 int main(void)
 {
-    Trust_Account carly {"Carly", 0,5};
-    std::cout << carly << std::endl;
+    Checking_Account carly {"Carly", 0};
     carly.deposit(5000);
-    std::cout << carly << std::endl;
-    carly.withdraw(100);
-    std::cout << carly << std::endl;
-    carly.withdraw(100);
-    std::cout << carly << std::endl;
-    carly.withdraw(100);
-    std::cout << carly << std::endl;
-    carly.withdraw(100);
-    std::cout << carly << std::endl;
-    carly.withdraw(100);
-    std::cout << carly << std::endl;
+    std::cout << "After deposit: " << carly << std::endl;
+    carly.withdraw(1000);
+    std::cout << "After withdraw: " << carly << std::endl;
+
     std::cout << "This program ended successfully";
     return 0;
 }

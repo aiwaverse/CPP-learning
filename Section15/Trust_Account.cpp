@@ -1,27 +1,24 @@
 #include "Trust_Account.hpp"
 
-int Trust_Account::withdraws_already_done=0;
-Trust_Account::Trust_Account(std::string name, double balance, double int_rate) : Savings_Account{name, balance, int_rate}
+Trust_Account::Trust_Account(std::string name, double balance, double int_rate) : Savings_Account{name, balance, int_rate}, withdraws_already_done{0}
 {
 }
 bool Trust_Account::deposit(double amount)
 {
-    const double value_to_give_bonus{5000}, bonus_to_give{50};
-    if (amount >= value_to_give_bonus)
-        amount += bonus_to_give;
-    return Savings_Account::deposit(amount);
+    if (amount >= bonus_threshold)
+        amount += deposit_bonus;
+    return Account::deposit(amount);
 }
 bool Trust_Account::withdraw(double amount)
 {
-    const int max_withdraws {3};
-    if (withdraws_already_done < max_withdraws or (amount > balance * 0.2))
+    if ((withdraws_already_done < max_withdraws) and (amount <= balance * max_withdraw_percent))
     {
         withdraws_already_done++;
         return Savings_Account::withdraw(amount);
     }
     else
     {
-        std::cout << "Error, you already did 4 withdraws" << std::endl;
+        std::cout << ((withdraws_already_done >= max_withdraws)? "3 withdraws already one" : "You cant withdraw more than 20% of your balance") << std::endl;
         return false;
     }
 }
