@@ -8,66 +8,30 @@
 #include "Trust_Account.h"
 #include "Account_Util.h"
 
-using namespace std; 
 
 int main() {
-    cout.precision(2);
-    cout << fixed;
-   
-    // Accounts
-    vector<Account> accounts;
-    accounts.push_back(Account {});
-    accounts.push_back(Account {"Larry"});
-    accounts.push_back(Account {"Moe", 2000} );
-    accounts.push_back(Account {"Curly", 5000} );
-    
-    display(accounts);
-    deposit(accounts, 1000);
-    withdraw(accounts,2000);
-    
-    // Savings 
 
-    vector<Savings_Account> sav_accounts;
-    sav_accounts.push_back(Savings_Account {} );
-    sav_accounts.push_back(Savings_Account {"Superman"} );
-    sav_accounts.push_back(Savings_Account {"Batman", 2000} );
-    sav_accounts.push_back(Savings_Account {"Wonderwoman", 5000, 5.0} );
+    Account* p1 = new Savings_Account{"Carly", 5000, 5};
+    Account* p2 = new Checking_Account{"Mimi", 9000};
+    Account* p3 = new Trust_Account{"Aiwa", 1000};
+    Account* p4 = new Trust_Account{"Belle", 12000, 10};
+    std::vector<Account *> acc_pointers {};
+    acc_pointers.push_back(p1);
+    acc_pointers.push_back(p2);
+    acc_pointers.push_back(p3);
+    acc_pointers.push_back(p4);
+    display(acc_pointers);
+    deposit(acc_pointers, 500);
+    display(acc_pointers);
+    for(size_t i {0};i<3;++i)
+        withdraw(acc_pointers, 10);
+    withdraw(acc_pointers, 10);
+    delete p1;
+    delete p2;
+    delete p3;
 
-    display(sav_accounts);
-    deposit(sav_accounts, 1000);
-    withdraw(sav_accounts,2000);
-   
-   // Checking
-   
-    vector<Checking_Account> check_accounts;
-    check_accounts.push_back(Checking_Account {} );
-    check_accounts.push_back(Checking_Account {"Kirk"} );
-    check_accounts.push_back(Checking_Account {"Spock", 2000} );
-    check_accounts.push_back(Checking_Account {"Bones", 5000} );
 
-    display(check_accounts);
-    deposit(check_accounts, 1000);
-    withdraw(check_accounts, 2000);
-
-    // Trust
-  
-    vector<Trust_Account> trust_accounts;
-    trust_accounts.push_back(Trust_Account {} );
-    trust_accounts.push_back(Trust_Account {"Athos", 10000, 5.0} );
-    trust_accounts.push_back(Trust_Account {"Porthos", 20000, 4.0} );
-    trust_accounts.push_back(Trust_Account {"Aramis", 30000} );
-
-    display(trust_accounts);
-    deposit(trust_accounts, 1000);
-    withdraw(trust_accounts, 3000);
-    
-    // Withdraw 5 times from each trust account
-    // All withdrawals should fail if there are too many withdrawals or if the withdrawl is > 20% of the balance
-    for (int i=1; i<=5; i++)
-        withdraw(trust_accounts, 1000);
-    
-
-    
+    std::cout << "This program has ended sucefully" << std::endl;
     return 0;
 }
 

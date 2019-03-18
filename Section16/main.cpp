@@ -3,6 +3,7 @@
 int main(void)
 {  
     Savings_Account carly("Carly", 1000);
+    Account& base = carly;
     std::cout << carly << std::endl;
 
 
