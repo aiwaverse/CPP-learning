@@ -11,7 +11,7 @@ long long int insertion_sort(std::vector<int>& vec){
         }
         if(j<i-1){      //just to make sure we don't make changes on an element that "never moved"
         vec.insert(vec.begin()+j+1,vec.at(i));      //this inserts the vec[i] element at the corrent position, then deletes the original
-        vec.erase(vec.begin()+i+1);
+        vec.erase(vec.begin()+i+1);s
         count_of_operations++;
         }
     }
