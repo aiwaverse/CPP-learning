@@ -14,7 +14,6 @@ long long int insertion_sort(std::vector<int>& vec){
         vec.erase(vec.begin()+i+1);
         count_of_operations++;
         }
-
     }
     return count_of_operations;
 };
