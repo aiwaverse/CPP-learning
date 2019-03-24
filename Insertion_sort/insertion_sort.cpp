@@ -1,5 +1,3 @@
-/* Made by Agatha (aiwaverse), on 19/03/2019, insertion sort based on class */
-
 #include <iostream>
 #include <vector>
 #include <ciso646>

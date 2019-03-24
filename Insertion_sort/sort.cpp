@@ -1,3 +1,5 @@
+/* Made by aiwa, on 19/03/2019, insertion sort based on class 
+Changed to the binary search version on 23/03/2019 */
 #include "sort.hpp"
 
 long long int insertion_sort(std::vector<int> &vec)

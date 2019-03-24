@@ -1,8 +1,9 @@
+//Made by aiwa in 24/03/2019, based on wikipedia's pseudocode
 #include "shellsort.hpp"
 
 void shellsort(std::vector<int>& vec)
 {
-    int gap_list[]{1750, 701, 301, 132, 57, 23, 10, 4, 1}; //based on ciura's optimal list
+    int gap_list[]{1750, 701, 301, 132, 57, 23, 10, 4, 1}; //ciura's optimal list
     for (auto gap : gap_list)                              //for range loop could be changed for a normal for loop, but it's C++ so whatever
     {
         for (auto i{gap}; i < vec.size(); ++i) //cicyles the vector, starting at gap
