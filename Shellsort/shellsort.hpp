@@ -6,6 +6,6 @@
 #include <cmath>
 #include <ctime>
 #include <memory>
-#include <ciso646>
+#include "sort.hpp"
 
-void shellsort(const std::vector<int>& vec);
+void shellsort(std::vector<int>& vec);
