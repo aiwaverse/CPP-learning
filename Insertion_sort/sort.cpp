@@ -42,8 +42,8 @@ int binary_search_for_insertion(const std::vector<int> &vec, int node, int left,
     if (right <= left) //if we only have one element left to comapre;
         return ((node > vec.at(left)) ? left + 1 : left);
     int mean{(left + right) / 2};
-    //    if(vec.at(mean)==node)      //if the mean is the same value as the element we want to change
-    //        return mean+1;
+        if(vec.at(mean)==node)      //if the mean is the same value as the element we want to change
+            return mean+1;
     if (node > vec.at(mean)) //if the node is larger than the element vec[mean], we call it again, but with mean+1 as left
         return binary_search_for_insertion(vec, node, mean + 1, right);
     else //if the node is smaller, we call it again, but not right will be mean-1
