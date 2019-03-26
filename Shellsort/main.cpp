@@ -1,4 +1,4 @@
-//an even more different shellsort code, this time full of variants, wil powers of 2 and the ciura list + extra numbers
+//an even more different shellsort code, this time full of variants, with powers of 2 and the ciura list + extra numbers
 //use calculate time to get execution time
 //the shellsort_basic and shellsort_even_more_basic run on powers of 2, first one with insert/erase, second with the classic method
 //same for shellsort_ciura and shellsort_ciura_basic
