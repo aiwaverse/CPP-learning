@@ -34,6 +34,7 @@ int main(void)
     }
     std::cout << "On a total of " << total_of_words << " words, ";
     std::cout << word_to_search << " was found " << count_of_word << " times\n";
+    play_file.close();
     std::cout << "CLEAR! *bomb explodes*" << std::endl;
     return 0;
 }
