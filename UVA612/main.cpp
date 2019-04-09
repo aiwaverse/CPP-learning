@@ -1,8 +1,3 @@
-//Aceito pela UVA
-//Username gus_lenz, online judging ID 1045019
-//"Your submission with number 23123428 for the problem 612 - DNA Sorting has received the verdict Accepted."
-
-
 #include <iostream>
 #include <string>
 #include <algorithm>
