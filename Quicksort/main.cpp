@@ -10,7 +10,7 @@ int main(void) {
     std::uniform_real_distribution<> distribution(0.0,100.0);*/
 
   std::vector<int> vec{};
-  const int vector_size{100000}, number_of_iterations{100};
+  const int vector_size{100}, number_of_iterations{100};
   for (auto i{0}; i < vector_size; ++i) {
     vec.push_back(distribution(generator));
   }
