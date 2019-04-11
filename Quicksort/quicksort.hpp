@@ -7,7 +7,7 @@
 #include <vector>
 
 template <typename T>
-long long partition(std::vector<T> &vector_to_be_partitioned, long long high, long long low) {
+long long partition(std::vector<T>& vector_to_be_partitioned, long long high, long long low) {
     // this functions calculates partitions for quickosrt, it defines the pivot to the floor division of the mean of the boundaries
     T pivot{vector_to_be_partitioned.at((low + high) / 2)};  // asign to pivot the member of vector[(low+high)/2]
     long long i{low - 1};
@@ -25,7 +25,7 @@ long long partition(std::vector<T> &vector_to_be_partitioned, long long high, lo
     }
 }
 template <typename T>
-long long random_partition(std::vector<T> &vec, long long high, long long low) {
+long long random_partition(std::vector<T>& vec, long long high, long long low) {
     /*this function is to be used with the random version, it swaps the first element
 with a random placed element, and then calls partition */
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -37,7 +37,7 @@ with a random placed element, and then calls partition */
 }
 
 template <typename T>
-void quicksort(std::vector<T> &vector_to_be_ordered, long long high, long long low = 0) {
+void quicksort(std::vector<T>& vector_to_be_ordered, long long high, long long low = 0) {
     // normal quicksort function
     if (low < high) {
         long long p = partition(vector_to_be_ordered, high, low);
@@ -46,7 +46,7 @@ void quicksort(std::vector<T> &vector_to_be_ordered, long long high, long long l
     }
 }
 template <typename T>
-void random_quicksort(std::vector<T> &vec, long long low = 0) {
+void random_quicksort(std::vector<T>& vec, long long low = 0) {
     // quicksort but does with the random partitions, high is defined on the body to use with the calculate_time function
     long long high = vec.size() - 1;
     if (high > low) {
@@ -56,7 +56,7 @@ void random_quicksort(std::vector<T> &vec, long long low = 0) {
     }
 }
 template <typename T>
-size_t calculate_time(std::vector<T> &vec, void (*sort)(std::vector<T> &)) {
+size_t calculate_time(std::vector<T>& vec, void (*sort)(std::vector<T>&)) {
     // using a function pointer to calculate execution time of a function, returning in microseconds
     // can be changed to nanoseconds if wished
     auto start = std::chrono::high_resolution_clock::now();
@@ -65,13 +65,23 @@ size_t calculate_time(std::vector<T> &vec, void (*sort)(std::vector<T> &)) {
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     return duration.count();
 }
+
+// overloaded both the quicksort functions
+// this is here so we can call it on the calculate_time function
+// since that function only accepts a void function with a reference to a vector as parameter
 template <typename T>
-void shellsort_ciura_basic(std::vector<T> &vec) {
+void quicksort(std::vector<T>& vec) { quicksort(vec, vec.size() - 1); }
+template <typename T>
+void random_quicksort(std::vector<T>& vec) { quicksort(vec, vec.size() - 1); }
+
+template <typename T>
+void shellsort_ciura_basic(std::vector<T>& vec) {
     // same normal shellsort program, but with templates to fit the idea
-    std::vector<int> gap_list{1750, 701, 301, 132, 57, 23, 10, 4, 1};  // ciura's optimal list
+    std::deque<int> gap_list{1750, 701, 301, 132, 57, 23, 10, 4, 1};  // ciura's optimal list
     while (static_cast<int>(vec.size()) >= gap_list.at(0)) {
         int element = floor(gap_list.at(0) * 2.25);
-        gap_list.insert(gap_list.begin(), element);
+        gap_list.push_back(element);
+        std::rotate(gap_list.rbegin(), gap_list.rbegin() + 1, gap_list.rend());
     }
     for (auto gap : gap_list) {
         for (long unsigned i{static_cast<long unsigned>(gap)}; i < vec.size(); ++i)  // cicyles the vector, starting at gap
@@ -85,10 +95,3 @@ void shellsort_ciura_basic(std::vector<T> &vec) {
         }
     }
 }
-// overloaded both the quicksort functions
-// this is here so we can call it on the calculate_time function
-// since that function only accepts a void function with a reference to a vector as parameter
-template <typename T>
-void quicksort(std::vector<T> &vec) { quicksort(vec, vec.size() - 1); }
-template <typename T>
-void random_quicksort(std::vector<T> &vec) { quicksort(vec, vec.size() - 1); }
