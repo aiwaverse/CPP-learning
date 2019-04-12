@@ -77,7 +77,7 @@ void random_quicksort(std::vector<T>& vec) { quicksort(vec, vec.size() - 1); }
 template <typename T>
 void shellsort_ciura_basic(std::vector<T>& vec) {
     // same normal shellsort program, but with templates to fit the idea
-    std::deque<int> gap_list{1750, 701, 301, 132, 57, 23, 10, 4, 1};  // ciura's optimal list
+    std::vector<int> gap_list{1750, 701, 301, 132, 57, 23, 10, 4, 1};  // ciura's optimal list
     while (static_cast<int>(vec.size()) >= gap_list.at(0)) {
         int element = floor(gap_list.at(0) * 2.25);
         gap_list.push_back(element);
