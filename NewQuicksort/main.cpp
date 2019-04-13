@@ -1,7 +1,5 @@
 #include "quicksort.hpp"
 
-using namespace mei;
-
 int main(){
     mei::sort_data<int> vec;
     vec.push_back(3);
