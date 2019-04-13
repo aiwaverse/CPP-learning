@@ -73,4 +73,15 @@ void sort_data<T>::quicksort(long long low, long long high) {
         quicksort(p + 1, high);
     }
 }
+
+template <typename T>
+void sort_data<T>::random_pivot(long long low, long long high) {
+    using namespace std::chrono;
+    auto seed {system_clock::now().time_since_epoch().count()};
+    std::default_random_engine generator;
+    std::uniform_int_distribution<long long> distribution(low + 1, high);
+    auto r{distribution(generator)};
+    std::swap(vec.at(low), vec.at(r));
+}
+
 }  // namespace mei
