@@ -1,15 +1,30 @@
 #pragma once
 #include <algorithm>
+#include <array>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
 
+unsigned swaps{0}, recursives{0};
+
 template <typename T>
-long long partition(std::vector<T>& vector_to_be_partitioned, long long high, long long low) {
+T median_partition(std::vector<T>& vec, long long high, long long low) {
+    std::array<T, 3> for_the_median{vec.at(low), vec.at(high), vec.at((high + low)/2)};
+    std::sort(for_the_median.begin(), for_the_median.end());
+    return for_the_median.at(for_the_median.size()/2);
+}
+
+template <typename T>
+long long partition(std::vector<T>& vector_to_be_partitioned, long long high, long long low, bool flag) {
     // this functions calculates partitions for quickosrt, it defines the pivot to the floor division of the mean of the boundaries
-    T pivot{vector_to_be_partitioned.at((low + high) / 2)};  // asign to pivot the member of vector[(low+high)/2]
+    T pivot;
+    if (flag == true)
+        pivot = vector_to_be_partitioned.at(low);  // asign to pivot the member of vector[low]
+    else
+        pivot = median_partition(vector_to_be_partitioned, high, low);
     long long i{low - 1};
     long long j{high + 1};
     while (true) {
@@ -22,6 +37,7 @@ long long partition(std::vector<T>& vector_to_be_partitioned, long long high, lo
         if (i >= j)
             return j;
         std::swap(vector_to_be_partitioned.at(i), vector_to_be_partitioned.at(j));
+        swaps++;
     }
 }
 template <typename T>
@@ -30,23 +46,25 @@ long long random_partition(std::vector<T>& vec, long long high, long long low) {
 with a random placed element, and then calls partition */
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
-    std::uniform_int_distribution<long long> distribution(low + 1, high - 1);
+    std::uniform_int_distribution<long long> distribution(low + 1, high);
     auto r{distribution(generator)};
     std::swap(vec.at(low), vec.at(r));
-    return partition(vec, high, low);
+    return partition(vec, high, low, true);
 }
 
 template <typename T>
 void quicksort(std::vector<T>& vector_to_be_ordered, long long high, long long low = 0) {
     // normal quicksort function
     if (low < high) {
-        long long p = partition(vector_to_be_ordered, high, low);
+        long long p = partition(vector_to_be_ordered, high, low, false);
         quicksort(vector_to_be_ordered, p, low);
+        ++recursives;
         quicksort(vector_to_be_ordered, high, p + 1);
+        ++recursives;
     }
 }
 template <typename T>
-void random_quicksort(std::vector<T>& vec, long long low = 0) {
+void random_quicksort(std::vector<T>& vec, long long low) {
     // quicksort but does with the random partitions, high is defined on the body to use with the calculate_time function
     long long high = vec.size() - 1;
     if (high > low) {
@@ -62,7 +80,7 @@ size_t calculate_time(std::vector<T>& vec, void (*sort)(std::vector<T>&)) {
     auto start = std::chrono::high_resolution_clock::now();
     sort(vec);
     auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
     return duration.count();
 }
 
@@ -72,7 +90,7 @@ size_t calculate_time(std::vector<T>& vec, void (*sort)(std::vector<T>&)) {
 template <typename T>
 void quicksort(std::vector<T>& vec) { quicksort(vec, vec.size() - 1); }
 template <typename T>
-void random_quicksort(std::vector<T>& vec) { quicksort(vec, vec.size() - 1); }
+void random_quicksort(std::vector<T>& vec) { random_quicksort(vec, 0); }
 
 template <typename T>
 void shellsort_ciura_basic(std::vector<T>& vec) {
