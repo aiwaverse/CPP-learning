@@ -6,6 +6,7 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <cctype>
 #include "ind_functions.hpp"
 
 namespace mei {
@@ -23,6 +24,7 @@ class sort_data {
     void random_pivot(long long low, long long high);
     long long partition(long long low, long long high);
     void quicksort(long long low, long long high);
+    int64_t calculate_time(long long low, long long high);
 
    public:
     sort_data() : data{}, recursions{}, swaps{} {};
@@ -30,8 +32,8 @@ class sort_data {
     void push_back(Sort_T n) {
         data.push_back(n);
     }
-    void quicksort();
-    void random_quicksort();
+    int64_t quicksort();
+    int64_t random_quicksort();
     void clear();
     void reset_counters();
     void clear_all();
@@ -89,19 +91,23 @@ void sort_data<T>::random_pivot(long long low, long long high) {
 }
 
 template <typename T>
-void sort_data<T>::quicksort() {
+int64_t sort_data<T>::quicksort() {
+    int64_t total_time{};
     if (0 < (data.size() - 1)) {
         pivot_median(0, data.size() - 1);
-        quicksort(0, data.size() - 1);
+        total_time = calculate_time(0, data.size()-1);
     }
+    return total_time;
 }
 
 template <typename T>
-void sort_data<T>::random_quicksort() {
+int64_t sort_data<T>::random_quicksort() {
+    int64_t total_time{};
     if (0 < (data.size() - 1)) {
         random_pivot(0, data.size() - 1);
-        quicksort(0, data.size() - 1);
+        total_time = calculate_time(0, data.size()-1);
     }
+    return total_time;
 }
 
 template <>
@@ -117,20 +123,30 @@ void sort_data<double>::fill_random(size_t amount) {
         data.push_back(random(low_range, high_range));
 }
 template <typename T>
-void sort_data<T>::clear(){
+void sort_data<T>::clear() {
     data.clear();
 }
 
 template <typename T>
-void sort_data<T>::reset_counters(){
+void sort_data<T>::reset_counters() {
     swaps = 0;
     recursions = 0;
 }
 
 template <typename T>
-void sort_data<T>::clear_all(){
+void sort_data<T>::clear_all() {
     clear();
     reset_counters();
+}
+
+template <typename T>
+int64_t sort_data<T>::calculate_time(long long low, long long high) {
+    using namespace std::chrono;
+    auto start = high_resolution_clock::now();
+    quicksort(low, high);
+    auto stop = high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    return duration.count();
 }
 
 }  // namespace mei
