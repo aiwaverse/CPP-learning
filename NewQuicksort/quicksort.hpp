@@ -6,6 +6,7 @@
 #include <random>
 #include <string>
 #include <vector>
+#include "ind_functions.hpp"
 
 namespace mei {
 template <typename Sort_T>
@@ -21,14 +22,19 @@ class sort_data {
     void pivot_median(long long low, long long high);
     void random_pivot(long long low, long long high);
     long long partition(long long low, long long high);
+    void quicksort(long long low, long long high);
 
    public:
     sort_data() : data{}, recursions{}, swaps{} {};
-    void fill_random();
+    void fill_random(size_t amount);
     void push_back(Sort_T n) {
         data.push_back(n);
     }
-    void quicksort(long long low, long long high);
+    void quicksort();
+    void random_quicksort();
+    void clear();
+    void reset_counters();
+    void clear_all();
     size_t size() { return data.size(); };
 };
 template <typename Sort_T>
@@ -42,14 +48,13 @@ std::ostream& operator<<(std::ostream& os, const sort_data<Sort_T>& rhs) {
 }
 template <typename T>
 void sort_data<T>::pivot_median(long long low, long long high) {
-    std::array<long long, 3> arr{data.at(low), data.at(high), data.at((high + low) >> 1)};
+    std::array<T, 3> arr{data.at(low), data.at(high), data.at((high + low) >> 1)};
     std::sort(arr.begin(), arr.end());
     auto loc = std::find(data.begin(), data.end(), arr.at(1));
     std::swap(data.at(low), *loc);
 }
 template <typename T>
 long long sort_data<T>::partition(long long low, long long high) {
-    pivot_median(low, high);
     auto pivot{data.at(low)};
     auto i{low - 1}, j{high + 1};
     while (true) {
@@ -61,6 +66,7 @@ long long sort_data<T>::partition(long long low, long long high) {
         } while (data.at(j) > pivot);
         if (i >= j)
             return j;
+        ++swaps;
         std::swap(data.at(i), data.at(j));
     }
 }
@@ -69,19 +75,62 @@ template <typename T>
 void sort_data<T>::quicksort(long long low, long long high) {
     if (low < high) {
         auto p{partition(low, high)};
+        ++recursions;
         quicksort(low, p);
+        ++recursions;
         quicksort(p + 1, high);
     }
 }
 
 template <typename T>
 void sort_data<T>::random_pivot(long long low, long long high) {
-    using namespace std::chrono;
-    auto seed {system_clock::now().time_since_epoch().count()};
-    std::default_random_engine generator;
-    std::uniform_int_distribution<long long> distribution(low + 1, high);
-    auto r{distribution(generator)};
-    std::swap(vec.at(low), vec.at(r));
+    auto r{random(low + 1, high)};
+    std::swap(data.at(low), data.at(r));
+}
+
+template <typename T>
+void sort_data<T>::quicksort() {
+    if (0 < (data.size() - 1)) {
+        pivot_median(0, data.size() - 1);
+        quicksort(0, data.size() - 1);
+    }
+}
+
+template <typename T>
+void sort_data<T>::random_quicksort() {
+    if (0 < (data.size() - 1)) {
+        random_pivot(0, data.size() - 1);
+        quicksort(0, data.size() - 1);
+    }
+}
+
+template <>
+void sort_data<int>::fill_random(size_t amount) {
+    const long long low_range{0}, high_range{1000};
+    for (auto i{0}; i < amount; ++i)
+        data.push_back(random(low_range, high_range));
+}
+template <>
+void sort_data<double>::fill_random(size_t amount) {
+    const double low_range{0.0}, high_range{1000.0};
+    for (auto i{0}; i < amount; ++i)
+        data.push_back(random(low_range, high_range));
+}
+template <typename T>
+void sort_data<T>::clear(){
+    data.clear();
+}
+
+template <typename T>
+void sort_data<T>::reset_counters(){
+    swaps = 0;
+    recursions = 0;
+}
+
+template <typename T>
+void sort_data<T>::clear_all(){
+    clear();
+    reset_counters();
 }
 
 }  // namespace mei

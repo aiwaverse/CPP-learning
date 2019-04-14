@@ -2,12 +2,15 @@
 
 int main(){
     mei::sort_data<int> vec;
-    vec.push_back(3);
-    vec.push_back(5);
-    vec.push_back(8);
-    vec.push_back(2);    
+    vec.fill_random(15);
     std::cout << vec;
-    vec.quicksort(0,vec.size()-1);
+    vec.quicksort();
+    std::cout << vec;
+    vec.clear_all();
+    std::cout << "===================\n";
+    vec.fill_random(15);
+    std::cout << vec;
+    vec.random_quicksort();
     std::cout << vec;
     std::cout << "podo podohae" << std::endl;
     return 0;
