@@ -1,73 +1,58 @@
 #include <iostream>
 #include <vector>
 
-long long _mergeSort(std::vector<int>& arr, std::vector<int>& temp, int left, int right);
-long long merge(std::vector<int>& arr, std::vector<int>& temp, int left, int mid, int right);
+long top_down_merge_sort(std::vector<int>& A);
+long top_down_split(std::vector<int>& B, size_t iBegin, size_t iEnd, std::vector<int>& A);
+long top_down_merge(std::vector<int>& A, size_t iBegin, size_t iMiddle, size_t iEnd, std::vector<int>& B);
 
-long long mergeSort(std::vector<int>& arr, long long array_size) {
-    std::vector<int> temp{arr};
-    return _mergeSort(arr, temp, 0, array_size - 1);
-}
-long long _mergeSort(std::vector<int>& arr, std::vector<int>& temp, int left, int right) {
-    int mid;
-    long long inv_count{};
-    if (right > left) {
-        mid = (right + left) / 2;
-        inv_count = _mergeSort(arr, temp, left, mid);
-        inv_count += _mergeSort(arr, temp, mid + 1, right);
-        inv_count += merge(arr, temp, left, mid + 1, right);
-    }
+long top_down_merge_sort(std::vector<int>& A) {
+    std::vector<int> B{A};
+    auto inv_count = top_down_split(B, 0, B.size(), A);
     return inv_count;
 }
-long long merge(std::vector<int>& arr, std::vector<int>& temp, int left, int mid, int right) {
-    int i{left}, j{mid}, k{right};
-    long long inv_count{};
-    while ((i <= mid - 1) && (j <= right)) {
-        if (arr.at(i) <= arr.at(j)) {
-            temp.at(k) = arr.at(i);
-            ++k;
+
+long top_down_split(std::vector<int>& B, size_t iBegin, size_t iEnd, std::vector<int>& A) {
+    long inv_count{0};
+    if (iEnd - iBegin < 2)
+        return inv_count;
+    auto iMiddle{(iBegin + iEnd) / 2};
+    inv_count = top_down_split(A, iBegin, iMiddle, B);
+    inv_count += top_down_split(A, iMiddle, iEnd, B);
+    inv_count += top_down_merge(B, iBegin, iMiddle, iEnd, A);
+
+    return inv_count;
+}
+long top_down_merge(std::vector<int>& A, size_t iBegin, size_t iMiddle, size_t iEnd, std::vector<int>& B) {
+    auto i{iBegin}, j{iMiddle};
+    long inversion_count{0};
+    for (auto k{iBegin}; k < iEnd; ++k) {
+        if ((i < iMiddle) and ((j >= iEnd) or (A.at(i) <= A.at(j)))) {
+            B.at(k) = A.at(i);
             ++i;
         } else {
-            temp.at(k) = arr.at(j);
-            ++k;
+            B.at(k) = A.at(j);
             ++j;
-            inv_count = inv_count + (mid - i);
+            inversion_count = inversion_count + (iMiddle - i);
         }
     }
-
-    /* Copy the remaining elements of left subarray  
-(if there are any) to temp*/
-    while (i <= mid - 1) {
-        temp.at(k) = arr.at(i);
-        ++k; ++i;
-    }
-
-    /* Copy the remaining elements of right subarray  
-(if there are any) to temp*/
-    while (j <= right) {
-        temp.at(k) = arr.at(j);
-        ++k;
-        ++j;
-    }
-
-    /*Copy back the merged elements to original array*/
-    for (i = left; i <= right; i++)
-        arr.at(i) = temp.at(i);
-
-    return inv_count;
+    return inversion_count;
 }
 
 int main(void) {
-    long number{};
-    while ((std::cin >> number) and (number != 0)) {
-        std::vector<int> sequences{};
-        for (int i{0}; i < number; ++i) {
-            int n;
-            std::cin >> n;
-            sequences.push_back(n);
+    std::vector<int> test_case{};
+    int number{};
+    do {
+        std::cin >> number;
+        if (number != 0) {
+            for (size_t i{0}; i < number; ++i) {
+                int n{};
+                std::cin >> n;
+                test_case.push_back(n);
+            }
+            auto inv = top_down_merge_sort(test_case);
+            std::cout << inv << std::endl;
+            test_case.clear();
         }
-        auto counter{mergeSort(sequences, sequences.size())};
-        std::cout << counter << std::endl;
-    }
+    } while (number != 0);
     return 0;
 }
