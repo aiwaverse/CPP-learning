@@ -1,11 +1,5 @@
 #include "radix.hpp"
 
-void display(const std::vector<int>& disp) {
-    for (auto v : disp)
-        std::cout << v << " ";
-    std::cout << std::endl;
-}
-
 unsigned get_number_of_digits(unsigned i) {
     return i > 0 ? (int)log10((double)i) + 1 : 1;
 }
@@ -66,11 +60,40 @@ int64_t test_radix_old_time(std::vector<int>& vec) {
 }
 
 void string_radix_msd(std::vector<std::string>& words) {
-    for (auto i{0}; i < words.size(); ++i){
-
+    for (size_t i{0}; i < words.size(); ++i) {
+        _string_radix_msd(words, i);
     }
 }
 
-void _string_radix_msd(std::vector<std::string>& words, int index){
-    
+void _string_radix_msd(std::vector<std::string>& words, size_t index) {
+    std::vector<std::string> output(words.size());
+    std::array<int, 256> count{};
+    for (size_t i{0}; i < words.size(); ++i)
+        ++count.at((words.at(i).at(index)));
+    for (size_t i{1}; i < count.size(); ++i)
+        count.at(i) += count.at(i - 1);
+    for (long long i{static_cast<long long>(words.size()) - 1}; i >= 0; --i) {
+        output.at(count.at((words.at(i).at(index)) - 1)) = words.at(i);
+        --count.at((words.at(i).at(index)));
+    }
+    output.swap(words);
+}
+
+void sort_string(std::vector<std::string>& a, int lo, int hi, int d) {
+    const int R{256};
+    std::vector<std::string> aux(a.size());
+    std::array<int, R + 2> count{};
+    if (hi <= lo)
+        return;
+    for (int i{lo}; i <= hi; ++i)
+        ++count.at(a.at(i).at(d) + 2);
+    for (int r{0}; r <= R + 1; ++r)
+        count.at(r + 1) += count.at(r);
+    for (int i{lo}; i <= hi; ++i)
+        aux.at(count.at(a.at(i).at(d) + 1)++) = a.at(i);
+    for (int i{lo}; i <= hi; ++i)
+        a.at(i) = aux.at(i - lo);
+    // Recursively sort for each character value.
+    for (int r = 0; r < R; ++r)
+        sort_string(a, lo + count.at(r), lo + count.at(r + 1) - 1, d + 1);
 }
