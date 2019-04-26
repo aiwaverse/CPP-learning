@@ -62,8 +62,7 @@ void count_word(const std::vector<std::string>& words, std::ofstream& file) {
     }
 }
 void count_word_fast(const std::vector<std::string>& words, std::ofstream& file) {
-    int j{0};
-    for (int i{0}; i < words.size()-1; ++i) {
+    for (size_t i{0}, j{0}; i < words.size()-1; ++i) {
         if (words.at(i) == words.at(i + 1)) {
             ++j;
         } else {
