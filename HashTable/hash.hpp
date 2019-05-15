@@ -28,6 +28,7 @@ class Hash_Table {
     std::size_t linear_probing(int elmt);
     std::size_t quadratic_probing(int elmt);
     std::size_t double_hashing(int elmt);
+    void redistribute(void); //to be implemented?
 
    public:
     Hash_Table();

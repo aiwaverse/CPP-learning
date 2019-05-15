@@ -1,4 +1,5 @@
 #include "hash.hpp"
+
 std::ostream& operator<<(std::ostream& os, const Hash_Table& rhs) {
     os << "[ ";
     std::size_t i{0}, j{0};
@@ -29,9 +30,11 @@ void Hash_Table::resize(void) {
     hash_table.resize(hash_table.size() * 2);
 }
 bool Hash_Table::insert(int elmnt) {
+    //lambda for easy change on the probing
+    auto hash = [&](int e){return this->linear_probing(e);};
     using std::size_t;
     long long e{-1}, mark{-1};
-    size_t calc_adress{linear_probing(elmnt)};
+    size_t calc_adress{hash(elmnt)};
     size_t free_adress{calc_adress};
     do {
         if (hash_table.at(free_adress).used)
@@ -39,11 +42,11 @@ bool Hash_Table::insert(int elmnt) {
                 if (hash_table.at(free_adress) == elmnt)
                     return false;
                 else
-                    free_adress = linear_probing(free_adress) + 1;
+                    free_adress = hash(free_adress) + 1;
             else {
                 if (mark == -1)
                     mark = free_adress;
-                free_adress = linear_probing(free_adress);
+                free_adress = hash(free_adress);
             }
         else {
             if (mark == -1)
@@ -63,26 +66,28 @@ bool Hash_Table::insert(int elmnt) {
 }
 int Hash_Table::find(int c) {
     using std::size_t;
+    //lambda for easy change on the probing
+    auto hash = [&](int e){return this->linear_probing(e);};
     int e{-1};
-    size_t calc_adr{linear_probing(c)};
+    size_t calc_adr{hash(c)};
     size_t free_adr{calc_adr};
     do {
         if (hash_table.at(free_adr).used)
             if ((hash_table.at(free_adr).occupied) and (hash_table.at(free_adr).key == c))
                 e = free_adr;
             else
-                free_adr = linear_probing(free_adr) + 1;
+                free_adr = hash(free_adr) + 1;
         else
             break;
     } while ((free_adr != calc_adr) and (e == -1));
-/*    if (e != -1)
-        e -= 2;*/
     return e;
 }
 bool Hash_Table::remove(int c) {
     using std::size_t;
-    if (find(c) != -1) {
-        hash_table.at(c).occupied = false;
+    auto pos = find(c);
+    if (pos != -1) {
+        hash_table.at(pos).occupied = false;
+        --filled_nodes;
         return true;
     } else
         return false;
@@ -94,11 +99,11 @@ void menu() {
     using std::left;
     using std::right;
     using std::setw;
-    cout << setw(1) << left << "1" << setw(30) << right << " - Insert an element\n";
-    cout << setw(1) << left << "2" << setw(30) << right << " - Find an element\n";
-    cout << setw(1) << left << "3" << setw(30) << right << " - Remove an element\n";
-    cout << setw(1) << left << "4" << setw(30) << right << " - Print the table\n";
-    cout << setw(1) << left << "5" << setw(30) << right << " - Quit\n";
+    cout << setw(1) << left << "1" << setw(25) << right << " - Insert an element\n";
+    cout << setw(1) << left << "2" << setw(25) << right << " - Find an element\n";
+    cout << setw(1) << left << "3" << setw(25) << right << " - Remove an element\n";
+    cout << setw(1) << left << "4" << setw(25) << right << " - Print the table\n";
+    cout << setw(1) << left << "5" << setw(25) << right << " - Quit\n";
     cout << "Enter your option: ";
 }
 void parse_option(Hash_Table& hasht, const int op) {

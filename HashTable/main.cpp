@@ -9,9 +9,7 @@ int main(void) {
     do {
         menu();
         cin >> option;
-        if (option != 5)
-            parse_option(table, option);
-
+        parse_option(table, option);
     } while (option != 5);
 
     cout << "trying to be stronger for you" << endl;
