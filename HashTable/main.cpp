@@ -1,16 +1,19 @@
 #include "hash.hpp"
 
-int main(void){
-	using std::cin;
-	using std::cout; 
-	using std::endl;
-	Hash_Table table {};
-	cout << table << endl;
-	table.insert(9);
-	table.insert(2);
-	table.insert(24);
-	cout << table << endl;
+int main(void) {
+    using std::cin;
+    using std::cout;
+    using std::endl;
+    Hash_Table table{};
+    int option{};
+    do {
+        menu();
+        cin >> option;
+        if (option != 5)
+            parse_option(table, option);
 
-	cout << "trying to be stronger for you" << endl;
-	return 0;
+    } while (option != 5);
+
+    cout << "trying to be stronger for you" << endl;
+    return 0;
 }

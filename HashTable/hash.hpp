@@ -1,4 +1,5 @@
 #pragma once
+#include <iomanip>
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -7,7 +8,6 @@ struct Hash_Node {
     int key{-1};
     bool used{false};
     bool occupied{false};
-    bool deleted{false};
     bool operator==(const Hash_Node& rhs) {
         return this->key == rhs.key;
     }
@@ -23,7 +23,7 @@ class Hash_Table {
 
    private:
     std::vector<Hash_Node> hash_table{};
-	unsigned filled_nodes{0};
+    unsigned filled_nodes{0};
     //adress calculators;
     std::size_t linear_probing(int elmt);
     std::size_t quadratic_probing(int elmt);
@@ -31,11 +31,14 @@ class Hash_Table {
 
    public:
     Hash_Table();
-	Hash_Table(const Hash_Table&)=default;
-	Hash_Table(Hash_Table&&)=default;
-	Hash_Table& operator=(Hash_Table rhs);
+    Hash_Table(const Hash_Table&) = default;
+    Hash_Table(Hash_Table&&) = default;
+    Hash_Table& operator=(Hash_Table rhs);
     void resize(void);
     bool insert(int);
-    std::size_t find(int);
+    int find(int);
     bool remove(int);
 };
+
+void menu(void);
+void parse_option(Hash_Table&, const int);
