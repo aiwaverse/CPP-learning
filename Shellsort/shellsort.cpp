@@ -67,9 +67,10 @@ void shellsort_even_more_basic(std::vector<int> &vec)
                 vec.at(j) = vec.at(j - gap);
             }
             vec.at(j) = temp;
-        }
-        std::cout << "after increments of size " << gap << " the list is: ";
         print_vector(vec);
+        }
+//        std::cout << "after increments of size " << gap << " the list is: ";
+//        print_vector(vec);
     }
 }
 
