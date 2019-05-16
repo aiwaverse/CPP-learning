@@ -11,7 +11,8 @@ std::ostream& operator<<(std::ostream& os, const Hash_Table& rhs) {
         } else
             ++j;
     }
-    os << "]";
+    os << "]" << std::endl;
+    os << "Size: " << rhs.hash_table.size() << std::endl;
     return os;
 }
 
@@ -27,11 +28,25 @@ std::size_t Hash_Table::linear_probing(int elmt) {
 
 //this doubles the hash table size
 void Hash_Table::resize(void) {
-    hash_table.resize(hash_table.size() * 2);
+    std::vector<Hash_Node> vec_hash{};
+    for (auto h : hash_table) {
+        if (h.occupied == true) {
+            vec_hash.push_back(h);
+        }
+    }
+    auto sz = hash_table.size();
+    hash_table.clear();
+    filled_nodes=0;
+    hash_table.resize(sz * 2);
+    std::cout << "after resize\n";
+    for (auto v : vec_hash) {
+        std::cout << "v.key: " << v.key << std::endl;
+        insert(v.key);
+    }
 }
 bool Hash_Table::insert(int elmnt) {
     //lambda for easy change on the probing
-    auto hash = [&](int e){return this->linear_probing(e);};
+    auto hash = [&](int e) { return this->linear_probing(e); };
     using std::size_t;
     long long e{-1}, mark{-1};
     size_t calc_adress{hash(elmnt)};
@@ -67,7 +82,7 @@ bool Hash_Table::insert(int elmnt) {
 int Hash_Table::find(int c) {
     using std::size_t;
     //lambda for easy change on the probing
-    auto hash = [&](int e){return this->linear_probing(e);};
+    auto hash = [&](int e) { return this->linear_probing(e); };
     int e{-1};
     size_t calc_adr{hash(c)};
     size_t free_adr{calc_adr};
