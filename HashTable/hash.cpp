@@ -5,7 +5,7 @@ std::ostream& operator<<(std::ostream& os, const Hash_Table& rhs) {
     std::size_t i{0}, j{0};
     while (i < rhs.filled_nodes) {
         if (rhs.hash_table.at(j).occupied != false) {
-            os << rhs.hash_table.at(j).key << " ";
+            os << rhs.hash_table.at(j).word << " ";
             ++i;
             ++j;
         } else
@@ -21,7 +21,7 @@ Hash_Table::Hash_Table() : hash_table{} {
     hash_table.resize(initial_size);  //starting hash_size
 }
 //adress calculator linear
-std::size_t Hash_Table::linear_probing(int elmt) {
+std::size_t Hash_Table::linear_probing(std::size_t elmt) {
     return elmt % hash_table.size();
 }
 //others to be implemented
@@ -36,25 +36,25 @@ void Hash_Table::resize(void) {
     }
     auto sz = hash_table.size();
     hash_table.clear();
-    filled_nodes=0;
+    filled_nodes = 0;
     hash_table.resize(sz * 2);
     std::cout << "after resize\n";
     for (auto v : vec_hash) {
         std::cout << "v.key: " << v.key << std::endl;
-        insert(v.key);
+        insert(v.word);
     }
 }
-bool Hash_Table::insert(int elmnt) {
+bool Hash_Table::insert(std::string word) {
     //lambda for easy change on the probing
-    auto hash = [&](int e) { return this->linear_probing(e); };
+    auto hash = [&](std::size_t e) { return this->linear_probing(e); }; // change this in case of changing the mapping or probing
     using std::size_t;
     long long e{-1}, mark{-1};
-    size_t calc_adress{hash(elmnt)};
+    size_t calc_adress{linear_probing(string_mapping_one(word))}; // change this in case of changing the mapping or probing
     size_t free_adress{calc_adress};
     do {
         if (hash_table.at(free_adress).used)
             if (hash_table.at(free_adress).occupied)
-                if (hash_table.at(free_adress) == elmnt)
+                if (hash_table.at(free_adress) == word)
                     return false;
                 else
                     free_adress = hash(free_adress) + 1;
@@ -71,24 +71,26 @@ bool Hash_Table::insert(int elmnt) {
     } while ((calc_adress != free_adress) and (e == -1));
     if ((e == -1) and (mark != -1)) {
         ++filled_nodes;
-        hash_table.at(mark).key = elmnt;
+        hash_table.at(mark).key = string_mapping_one(word);
         hash_table.at(mark).used = true;
         hash_table.at(mark).occupied = true;
+        hash_table.at(mark).word = word;
     }
     if (filled_nodes > (hash_table.size() / 2))
         resize();
     return true;
 }
-int Hash_Table::find(int c) {
+int Hash_Table::find(std::string word) {
     using std::size_t;
+    auto calc_key = string_mapping_one(word); //change this for different mapping
     //lambda for easy change on the probing
     auto hash = [&](int e) { return this->linear_probing(e); };
     int e{-1};
-    size_t calc_adr{hash(c)};
+    size_t calc_adr{linear_probing(string_mapping_one(word))}; // change this in case of changing the mapping or probing
     size_t free_adr{calc_adr};
     do {
         if (hash_table.at(free_adr).used)
-            if ((hash_table.at(free_adr).occupied) and (hash_table.at(free_adr).key == c))
+            if ((hash_table.at(free_adr).occupied) and (hash_table.at(free_adr).key == calc_key))
                 e = free_adr;
             else
                 free_adr = hash(free_adr) + 1;
@@ -97,9 +99,9 @@ int Hash_Table::find(int c) {
     } while ((free_adr != calc_adr) and (e == -1));
     return e;
 }
-bool Hash_Table::remove(int c) {
+bool Hash_Table::remove(std::string word) {
     using std::size_t;
-    auto pos = find(c);
+    auto pos = find(word);
     if (pos != -1) {
         hash_table.at(pos).occupied = false;
         --filled_nodes;
@@ -125,7 +127,7 @@ void parse_option(Hash_Table& hasht, const int op) {
     using std::cin;
     using std::cout;
     using std::endl;
-    int elm{};
+    std::string elm{};
     switch (op) {
         case 1:
             cout << "Please enter the element to be inserted: ";
@@ -162,4 +164,17 @@ void parse_option(Hash_Table& hasht, const int op) {
         default:
             cout << "Please enter a valid option\n";
     }
+}
+
+//string mapping functions
+std::size_t Hash_Table::string_mapping_one(std::string word) {
+    return std::hash<std::string>{}(word) % hash_table.size();
+}
+
+std::size_t Hash_Table::string_mapping_two(std::string word) {
+    std::size_t hash{0};
+    int p{9};
+    for (int i{0}; i < word.length(); ++i)
+        hash = (p * hash + word.at(i)) % 10;
+    return hash;
 }

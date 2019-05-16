@@ -6,12 +6,12 @@ int main(void) {
     using std::endl;
     Hash_Table table{};
     int option{};
+    
     do {
         menu();
         cin >> option;
         parse_option(table, option);
     } while (option != 5);
-
     cout << "trying to be stronger for you" << endl;
     return 0;
 }
