@@ -80,8 +80,9 @@ bool Hash_Table::insert(std::string word) {
         resize();
     return true;
 }
-int Hash_Table::find(std::string word) {
+long Hash_Table::find(std::string word) {
     using std::size_t;
+    long collisions{1};
     auto calc_key = string_mapping_one(word); //change this for different mapping
     //lambda for easy change on the probing
     auto hash = [&](int e) { return this->linear_probing(e); };

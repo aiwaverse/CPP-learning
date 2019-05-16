@@ -39,7 +39,7 @@ class Hash_Table {
     Hash_Table& operator=(Hash_Table rhs);
     void resize(void);
     bool insert(std::string);
-    int find(std::string);
+    long find(std::string);
     bool remove(std::string);
     std::size_t string_mapping_one(std::string word);
     std::size_t string_mapping_two(std::string word);
