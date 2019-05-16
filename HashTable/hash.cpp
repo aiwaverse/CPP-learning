@@ -173,8 +173,8 @@ std::size_t Hash_Table::string_mapping_one(std::string word) {
 
 std::size_t Hash_Table::string_mapping_two(std::string word) {
     std::size_t hash{0};
-    int p{9};
+    const int p{9};
     for (int i{0}; i < word.length(); ++i)
-        hash = (p * hash + word.at(i)) % 10;
+        hash = (p * hash + word.at(i)) % hash_table.size();
     return hash;
 }

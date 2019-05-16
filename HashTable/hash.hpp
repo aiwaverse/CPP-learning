@@ -19,7 +19,6 @@ struct Hash_Node {
     }
     std::string word {};
 };
-//quick stream insertion operator overload, to print each Hash_Node, only with the key
 //if more is to be implemented, maybe print the actual content
 
 class Hash_Table {
