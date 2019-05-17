@@ -6,6 +6,7 @@
 #include <string>
 #include <ostream>
 #include <vector>
+#include <cmath>
 
 struct Hash_Node {
     int key{-1};
@@ -31,6 +32,8 @@ class Hash_Table {
     std::size_t linear_probing(std::size_t);
     std::size_t quadratic_probing(std::size_t);
     std::size_t double_hashing(std::size_t);
+    long long string_mapping_one(std::string word);
+    long long string_mapping_two(std::string word);
 
    public:
     Hash_Table();
@@ -39,10 +42,9 @@ class Hash_Table {
     Hash_Table& operator=(Hash_Table rhs);
     void resize(void);
     bool insert(std::string);
-    long find(std::string);
+    std::pair<int, long>  find(std::string);
     bool remove(std::string);
-    std::size_t string_mapping_one(std::string word);
-    std::size_t string_mapping_two(std::string word);
+
 };
 
 void menu(void);
