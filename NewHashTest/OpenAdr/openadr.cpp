@@ -8,10 +8,16 @@ size_t Hash_Table::mapping_one(const std::string& s) {
     return hash;
 }
 size_t Hash_Table::mapping_two(const std::string& s) {
-    std::size_t hash{0};
-    const int p{9};
-    for (std::size_t i{0}; i < s.length(); ++i)
-        hash = (p * hash + s.at(i));
+    size_t i{0};
+    uint32_t hash{0};
+    while (i != s.size()) {
+        hash += s.at(i++);
+        hash += hash << 10;
+        hash ^= hash >> 6;
+    }
+    hash += hash << 3;
+    hash ^= hash >> 11;
+    hash += hash << 15;
     return hash;
 }
 size_t Hash_Table::mapping_chooser(const std::string& s) {
@@ -42,9 +48,9 @@ bool Hash_Table::insert(std::string s) {
     for (; i < table.size(); ++i) {
         key = double_probing(s, i);
         pos = key % table.size();
-        if (table.at(pos).occupied() == false) //if the space is availabe
+        if (table.at(pos).occupied() == false)  //if the space is availabe
             break;
-        if(table.at(pos).key() != -1 and table.at(pos).key()==key) //if the key at the position is the same, the element is the same
+        if (table.at(pos).key() != -1 and table.at(pos).key() == static_cast<size_t>(key))  //if the key at the position is the same, the element is the same
             return false;
     }
     if (i != table.size()) {
