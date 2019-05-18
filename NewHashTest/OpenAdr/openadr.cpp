@@ -1,10 +1,14 @@
 #include "openadr.hpp"
 namespace open {
 size_t Hash_Table::mapping_one(const std::string& s) {
-    std::size_t hash{s.size()};
-    const int p = static_cast<int>(pow(2, hash));
-    for (std::size_t i{0}; i < s.length(); ++i)
-        hash = (p * hash + s.at(i));
+    size_t hash{37};
+    size_t i{0};
+    constexpr unsigned prime_a{54059};
+    constexpr unsigned prime_b{86969};
+    while (i < s.size()) {
+        hash = (hash * prime_a) ^ (s.at(i) * prime_b);
+        ++i;
+    }
     return hash;
 }
 size_t Hash_Table::mapping_two(const std::string& s) {
@@ -33,38 +37,70 @@ size_t Hash_Table::mapping_chooser(const std::string& s) {
     }
 }
 //probing functions
-size_t Hash_Table::double_probing(const std::string& s, const unsigned i) {
-    size_t c{mapping_chooser(s)};
-    return c + i * (c % 7);
+size_t Hash_Table::double_probing(size_t c, const unsigned i) {
+    return c + i * (29 - (c % 7));
 }
-size_t Hash_Table::linear_probing(const std::string& s) {
-    return mapping_chooser(s);
+size_t Hash_Table::linear_probing(size_t c, const unsigned i) {
+    return c + i;
 }
 
 bool Hash_Table::insert(std::string s) {
     size_t i{0};
-    size_t key{};
-    size_t pos{};
-    for (; i < table.size(); ++i) {
-        key = double_probing(s, i);
-        pos = key % table.size();
+    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->linear_probing(c, i); };  //lambda for easy replacement
+    size_t key{mapping_chooser(s)};
+    auto o_key{key};
+    size_t pos{key % table.size()};
+    auto fpos{pos};
+    while (true) {
         if (table.at(pos).occupied() == false)  //if the space is availabe
             break;
-        if (table.at(pos).key() != -1 and table.at(pos).key() == static_cast<size_t>(key))  //if the key at the position is the same, the element is the same
+        //remove first condition
+        if (table.at(pos).key() == static_cast<size_t>(key))  //if the key at the position is the same, the element is the same
+            return false;
+        ++i;
+        key = probing(o_key, i);
+        pos = key % table.size();
+        if (pos == fpos)
             return false;
     }
-    if (i != table.size()) {
-        table.at(pos).set_key(key);
-        table.at(pos).set_occupied(true);
-        table.at(pos).set_string(s);
-        table.at(pos).set_used(true);
-        return true;
-    } else  //full table?
-        return false;
+    table.at(pos).set_key(key);
+    table.at(pos).set_occupied(true);
+    table.at(pos).set_string(s);
+    table.at(pos).set_used(true);
+    table.at(pos).set_collisions(i);
+    total_collisions += i;
+    ++number_of_strings;
+    return true;
+}
+
+long long Hash_Table::find(std::string s) {
+    size_t i{0};
+    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->linear_probing(c, i); };  //lambda for easy replacement
+    size_t key{mapping_chooser(s)};
+    auto o_key{key};
+    size_t pos{key % table.size()};
+    while (table.at(pos).used()==true) {
+        if (table.at(pos).key() == key)  //if the space is availabe
+            return i+1;
+        ++i;
+        key = probing(o_key, i);
+        pos = key % table.size();
+    }
+    return -1;
+}
+
+void Hash_Table::print(std::ofstream& os) {
+    for (auto e : table) {
+        os << "Key: " << e.key() << ", Word: " << e.string() << ", collisions to insert: " << e.collisions() << std::endl;
+    }
+    std::cout << "Number of filled nodes: " << number_of_strings << ", " << (static_cast<double>(number_of_strings)/table.size())*100 << "\% of the table is occupied" << std::endl;
+    std::cout << "Number of collisions: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
 }
 void Hash_Table::print(void) {
     for (auto e : table) {
-        std::cout << "Key: " << e.key() << ", Word: " << e.string() << std::endl;
+        std::cout << "Key: " << e.key() << ", Word: " << e.string() << ", collisions to insert: " << e.collisions() << std::endl;
     }
+    std::cout << "Number of filled nodes: " << number_of_strings << ", " << (number_of_strings/table.size())*100 << "%% of the table is occupied" << std::endl;
+    std::cout << "Number of collisions: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
 }
 }  // namespace open
