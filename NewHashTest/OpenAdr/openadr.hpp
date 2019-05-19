@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
-#include <functional>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -43,10 +43,17 @@ class Hash_Table {
     size_t mapping_chooser(const std::string&);
     size_t linear_probing(size_t, const unsigned);
     size_t double_probing(size_t, const unsigned);  //double probing and not double hashing to keep a pattern
+
    public:
     unsigned long long total_collisions{0};
-    Hash_Table(const unsigned n, const std::string& s, const unsigned i = 1) : table(n, {s}), mapping{i} {};  //initialize table with n elements with empty string
-    Hash_Table(const unsigned n, const unsigned i = 1) : table(n, {""}), mapping{i} {};                       //initialize table with n elements with empty string
+    Hash_Table(const unsigned n, const std::string& s, const unsigned i = 1) : table(n, {s}), mapping{i} {
+        if (mapping != 1 and mapping != 2)
+            throw std::runtime_error("ERROR, THE MAPPING IS NOT 1 OR 2\n");
+    };  //initialize table with n elements with s
+    Hash_Table(const unsigned n, const unsigned i = 1) : table(n, {""}), mapping{i} {
+        if (mapping != 1 and mapping != 2)
+            throw std::runtime_error("ERROR, THE MAPPING IS NOT 1 OR 2\n");
+    };  //initialize table with n elements with empty string
     Hash_Table(const Hash_Table&) = default;
     Hash_Table(Hash_Table&&) = default;
     bool insert(std::string);

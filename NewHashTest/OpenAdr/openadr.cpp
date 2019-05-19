@@ -46,7 +46,7 @@ size_t Hash_Table::linear_probing(size_t c, const unsigned i) {
 
 bool Hash_Table::insert(std::string s) {
     size_t i{0};
-    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->linear_probing(c, i); };  //lambda for easy replacement
+    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->double_probing(c, i); };  //lambda for easy replacement
     size_t key{mapping_chooser(s)};
     auto o_key{key};
     size_t pos{key % table.size()};
@@ -58,7 +58,7 @@ bool Hash_Table::insert(std::string s) {
         if (table.at(pos).key() == static_cast<size_t>(key))  //if the key at the position is the same, the element is the same
             return false;
         ++i;
-        key = probing(o_key, i);
+        key = probing(o_key, i);  //o_key is to use the original key in the function and not the new key
         pos = key % table.size();
         if (pos == fpos)
             return false;
@@ -75,13 +75,14 @@ bool Hash_Table::insert(std::string s) {
 
 long long Hash_Table::find(std::string s) {
     size_t i{0};
-    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->linear_probing(c, i); };  //lambda for easy replacement
+
+    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->double_probing(c, i); };  //lambda for easy replacement
     size_t key{mapping_chooser(s)};
     auto o_key{key};
     size_t pos{key % table.size()};
-    while (table.at(pos).used()==true) {
+    while (table.at(pos).used() == true) {
         if (table.at(pos).key() == key)  //if the space is availabe
-            return i+1;
+            return i + 1;
         ++i;
         key = probing(o_key, i);
         pos = key % table.size();
@@ -91,16 +92,21 @@ long long Hash_Table::find(std::string s) {
 
 void Hash_Table::print(std::ofstream& os) {
     for (auto e : table) {
-        os << "Key: " << e.key() << ", Word: " << e.string() << ", collisions to insert: " << e.collisions() << std::endl;
+        if (e.key() != 0)
+            os << "Key: " << e.key() << ", Word: " << e.string() << ", collisions to insert: " << e.collisions() << std::endl;
     }
-    std::cout << "Number of filled nodes: " << number_of_strings << ", " << (static_cast<double>(number_of_strings)/table.size())*100 << "\% of the table is occupied" << std::endl;
-    std::cout << "Number of collisions: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
+    os << "Number of filled nodes: " << number_of_strings << ", " << (static_cast<double>(number_of_strings) / table.size()) * 100 << "\% of the table is occupied" << std::endl;
+    os << "Number of collisions on construction: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
+    std::cout << "Number of filled nodes: " << number_of_strings << ", " << (static_cast<double>(number_of_strings) / table.size()) * 100 << "\% of the table is occupied" << std::endl;
+    std::cout << "Number of collisions on construction: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
+
 }
 void Hash_Table::print(void) {
     for (auto e : table) {
-        std::cout << "Key: " << e.key() << ", Word: " << e.string() << ", collisions to insert: " << e.collisions() << std::endl;
+        if (e.key() != 0)
+            std::cout << "Key: " << e.key() << ", Word: " << e.string() << ", collisions to insert: " << e.collisions() << std::endl;
     }
-    std::cout << "Number of filled nodes: " << number_of_strings << ", " << (number_of_strings/table.size())*100 << "%% of the table is occupied" << std::endl;
-    std::cout << "Number of collisions: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
+    std::cout << "Number of filled nodes: " << number_of_strings << ", " << (number_of_strings / table.size()) * 100 << "%% of the table is occupied" << std::endl;
+    std::cout << "Number of collisions on construction: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
 }
 }  // namespace open
