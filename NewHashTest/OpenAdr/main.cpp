@@ -1,13 +1,28 @@
 #include <limits>
 #include <map>
+#include <sstream>
 #include "openadr.hpp"
 
 int main(void) {
     using std::string;
     //if you're gonna use double hashing, use 13339 (or the largest double prime that comes closer to 75% mark)
     //if it's linear probing, please use one number so that after all names are inserted, you have 75% of the table filled
-    //the second number is 1 or 2, for the two mapping functions
-    open::Hash_Table tbl(13339, 2U);
+    //the second number is 1 or 2, for the two mapping function
+    unsigned map{};
+    unsigned prob{};
+    std::stringstream iss{};
+    do {
+        std::cout << "Enter the mapping and the probing( 1 and 2 for both):\n";
+        std::string s{};
+        std::getline(std::cin, s);
+        iss.str(s);
+    } while ((not (iss >> map)) or (not (iss >> prob)));
+    unsigned sz{};
+    if(prob == 2)
+        sz=13339;
+    else
+        sz=13334;
+    open::Hash_Table tbl(sz, map, prob);
     std::cout << std::boolalpha;
     std::ifstream archive{"nomes_10000.txt"};
     std::ifstream consultas{"consultas.txt"};
@@ -58,7 +73,7 @@ int main(void) {
     std::cout << "Mean of comparasions: " << static_cast<double>(total_checkings) / (found_words + not_found_words) << std::endl;
     consultas.close();
     output_2.close();
-    output_3.close();
+    output_3.close();   
 
     return 0;
 }

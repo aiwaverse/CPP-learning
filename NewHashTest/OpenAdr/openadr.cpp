@@ -46,7 +46,15 @@ size_t Hash_Table::linear_probing(size_t c, const unsigned i) {
 
 bool Hash_Table::insert(std::string s) {
     size_t i{0};
-    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->double_probing(c, i); };  //lambda for easy replacement
+    auto probing = [&](size_t c, unsigned i) mutable -> size_t {
+        if (this->probing == 2)
+            return this->double_probing(c, i);
+        else
+        {
+            return this->linear_probing(c, i);
+        }
+        
+    };  //lambda for easy replacement
     size_t key{mapping_chooser(s)};
     auto o_key{key};
     size_t pos{key % table.size()};
@@ -75,8 +83,15 @@ bool Hash_Table::insert(std::string s) {
 
 long long Hash_Table::find(std::string s) {
     size_t i{0};
-
-    auto probing = [&](size_t c, unsigned i) mutable -> size_t { return this->double_probing(c, i); };  //lambda for easy replacement
+    auto probing = [&](size_t c, unsigned i) mutable -> size_t {
+        if (this->probing == 2)
+            return this->double_probing(c, i);
+        else
+        {
+            return this->linear_probing(c, i);
+        }
+        
+    };  //lambda for easy replacement
     size_t key{mapping_chooser(s)};
     auto o_key{key};
     size_t pos{key % table.size()};
@@ -99,7 +114,6 @@ void Hash_Table::print(std::ofstream& os) {
     os << "Number of collisions on construction: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
     std::cout << "Number of filled nodes: " << number_of_strings << ", " << (static_cast<double>(number_of_strings) / table.size()) * 100 << "\% of the table is occupied" << std::endl;
     std::cout << "Number of collisions on construction: " << total_collisions << ", with a mean of: " << static_cast<double>(total_collisions) / number_of_strings << std::endl;
-
 }
 void Hash_Table::print(void) {
     for (auto e : table) {
